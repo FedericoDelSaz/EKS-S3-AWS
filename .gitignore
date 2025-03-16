@@ -1,0 +1,13 @@
+.idea/
+.vscode/
+*.tfstate*
+*.tfplan
+*.bck
+**/.terraform/*
+**/terraform-provider-aws_v5.61.0_x5
+**/.terraform.lock.hcl
+**/applyConfigurationPlan
+backup/
+xentry-charts/**/*.lock
+xentry-charts/**/*.tgz
+**/__pycache__/*.pyc
