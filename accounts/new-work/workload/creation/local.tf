@@ -1,12 +1,18 @@
 locals {
   cluster_version = "1.32"
+  aws_account_id  = data.aws_caller_identity.current.account_id
 
+  # VPC CIDR block for allowing traffic
   cidr_block = "10.0.0.0/16"
 
+  # Make sure that private subnets are defined and available
   private_eks_subnets = length(data.aws_subnets.eks_private_subnets.ids) > 0 ? data.aws_subnets.eks_private_subnets.ids : []
 
-  role_admin     = "admin"
+  # User and role definition for IAM
+  user = "interview-candidate"
+  role = "AWSServiceRoleForAmazonEKS"  # Make sure this role exists
 
+  # Managed node group configuration
   eks_managed_node_groups = {
     worker_nodes_1_32 = {
       desired_capacity = 2
