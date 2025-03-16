@@ -15,7 +15,7 @@ resource "aws_subnet" "public_subnet_1" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "public-subnet-1"
+    Name = "public-eks-subnet-${var.availability_zones[0]}"
   }
 }
 
@@ -26,7 +26,7 @@ resource "aws_subnet" "public_subnet_2" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "public-subnet-2"
+    Name = "public-eks-subnet-${var.availability_zones[1]}"
   }
 }
 
@@ -37,7 +37,7 @@ resource "aws_subnet" "public_subnet_3" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "public-subnet-3"
+    Name = "public-eks-subnet-${var.availability_zones[2]}"
   }
 }
 
@@ -48,7 +48,7 @@ resource "aws_subnet" "private_subnet_1" {
   availability_zone = var.availability_zones[0]
 
   tags = {
-    Name = "private-subnet-1"
+    Name = "private-eks-subnet-${var.availability_zones[0]}"
   }
 }
 
@@ -58,7 +58,7 @@ resource "aws_subnet" "private_subnet_2" {
   availability_zone = var.availability_zones[1]
 
   tags = {
-    Name = "private-subnet-2"
+    Name = "private-eks-subnet-${var.availability_zones[1]}"
   }
 }
 
@@ -68,7 +68,7 @@ resource "aws_subnet" "private_subnet_3" {
   availability_zone = var.availability_zones[2]
 
   tags = {
-    Name = "private-subnet-3"
+    Name = "private-eks-subnet-${var.availability_zones[2]}"
   }
 }
 
