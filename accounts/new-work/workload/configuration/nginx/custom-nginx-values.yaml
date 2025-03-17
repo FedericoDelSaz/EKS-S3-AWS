@@ -1,0 +1,12 @@
+controller:
+  replicaCount: 2
+  service:
+    labels:
+      dns: "route53"
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: "new-work-se-test.com"
+    internal:
+      enabled: true
+      annotations:
+        # Create internal ELB
+        service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
