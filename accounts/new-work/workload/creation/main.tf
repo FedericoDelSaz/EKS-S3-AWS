@@ -89,3 +89,22 @@ module "aws_auth" {
     local.aws_account_id
   ]
 }
+
+resource "random_id" "bucket_id" {
+  byte_length = 8
+}
+
+module "eks_s3_csi_driver" {
+  source  = "../../../../modules/aws-s3-csi-driver"
+
+  environment = "dev"
+  eks_cluster_name = var.cluster_name
+  bucket_name = "s3-bucket-${random_id.bucket_id.hex}"
+}
+
+module "s3_app_test" {
+  source = "../../../../modules/s3-app-test"
+  namespace = "s3-app-nw"
+  bucket_name = "s3-bucket-${random_id.bucket_id.hex}"
+  depends_on = [module.eks_s3_csi_driver]
+}

@@ -1,6 +1,9 @@
 locals {
   cluster_version = "1.32"
   aws_account_id  = data.aws_caller_identity.current.account_id
+  eks_cluster_id        = data.aws_eks_cluster.eks.id
+  eks_oidc_issuer_url   = replace(data.aws_eks_cluster.eks.identity[0].oidc[0].issuer, "https://", "")
+  eks_oidc_provider_arn = "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${local.eks_oidc_issuer_url}"
 
   # VPC CIDR block for allowing traffic
   cidr_block = "10.0.0.0/16"
