@@ -1,124 +1,87 @@
-# EKS Image Fetching App with S3 Integration
+# EKS Cluster Setup and S3 Image Display Service
 
 ## Overview
 
-This project demonstrates how to set up an Amazon EKS cluster on AWS, deploy a service that fetches and displays an image from an S3 bucket, and integrates the `mountpoint-s3-csi-driver` for seamless S3 mounting inside Kubernetes pods. This solution highlights security best practices with IAM roles for service accounts (IRSA) and scalable architecture using Kubernetes and AWS services.
+In this interview challenge, you are tasked with creating a fully functional Kubernetes cluster on AWS using **Amazon EKS** (Elastic Kubernetes Service). The main goal of the challenge is to deploy a service that fetches and displays an image stored in an **S3** (Simple Storage Service) bucket. You will utilize the **mountpoint-s3-csi-driver**, enabling Kubernetes pods to mount S3 buckets as file systems.
 
-## Architecture
+The challenge tests your understanding of the following:
+- **Kubernetes resource management** and best practices
+- **AWS services**, such as EKS and S3
+- Integration of third-party drivers like the **mountpoint-s3-csi-driver**
+- Ensuring **security**, **scalability**, **documentation**, and **maintainability**
 
-- **Amazon EKS Cluster**: A managed Kubernetes cluster running on AWS.
-- **mountpoint-s3-csi-driver**: A Container Storage Interface (CSI) driver for mounting S3 buckets as persistent volumes within Kubernetes pods.
-- **Kubernetes Deployment**: A deployment (e.g., Flask app or Nginx) that fetches and displays an image from the S3 bucket.
-- **ALB Ingress**: AWS Application Load Balancer (ALB) for exposing the application publicly.
-- **IAM Roles for Service Accounts (IRSA)**: Secure access to S3 using IAM roles assigned to Kubernetes service accounts.
+The task also requires you to demonstrate a solution that avoids the use of **InitContainers**, encouraging you to explore other methods for resource initialization.
 
-## Steps to Deploy
+By the end of the challenge, you should have a working service that:
+- Displays an image from an S3 bucket.
+- Integrates Kubernetes with AWS services.
+- Uses a public domain for external access.
 
-### 1. Provision EKS Cluster using Terraform
+Please ensure your solution is properly documented, secure, and scalable. Additionally, include an **architecture diagram** to outline the details of your setup.
 
-First, you need to set up your Terraform configuration to provision the EKS cluster. Use the following Terraform commands to initialize and apply the configuration.
+## Requirements
 
-1. **Initialize Terraform:**
-
-```bash
-terraform init
-```
-
-This command initializes your Terraform working directory and downloads the necessary provider plugins.
-
-2. **Apply Terraform Configuration:**
-
-```bash
-terraform apply
-```
-
-Terraform will provision the EKS cluster and the associated resources, including the IAM roles and policies. Once the provisioning is complete, you will have the EKS cluster running.
-
-### 2. Deploy mountpoint-s3-csi-driver
-
-Deploy the `mountpoint-s3-csi-driver` as a DaemonSet in the EKS cluster. Ensure that the correct IAM permissions are set via an OIDC identity provider to grant access to the S3 bucket.
-
-```bash
-kubectl apply -k github.com/kubernetes-sigs/sig-storage/csi-driver-s3/deploy/kubernetes/overlays/aws
-```
-
-### 3. Deploy Application
-
-Create a Kubernetes Deployment (Flask app or Nginx) that serves the image fetched from an S3 bucket. The pod should mount the S3 bucket as a volume using the `mountpoint-s3-csi-driver`.
-
-Here’s an example of a simple deployment manifest:
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: image-fetcher
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: image-fetcher
-  template:
-    metadata:
-      labels:
-        app: image-fetcher
-    spec:
-      containers:
-      - name: flask-app
-        image: my-flask-app
-        volumeMounts:
-        - mountPath: /mnt/s3
-          name: s3-volume
-      volumes:
-      - name: s3-volume
-        csi:
-          driver: mountpoint-s3.csi.aws.com
-          volumeHandle: s3://my-bucket-name
-```
-
-### 4. Expose the Service Publicly
-
-Use the AWS Load Balancer Controller to create an ALB Ingress for exposing the service publicly. Also, register a custom domain with Route 53 and attach an SSL certificate using AWS ACM.
-
-Example Ingress:
-
-```bash
-kubectl apply -f ingress.yaml
-```
-
-### 5. Security and Best Practices
-
-- **IAM Least Privilege**: Ensure that IAM roles for S3 access are scoped to the required permissions.
-- **Autoscaling**: Use **Karpenter** to enable node autoscaling in the EKS cluster based on demand.
-- **Helm**: Deploy the infrastructure and application using Helm charts to ensure repeatability and consistency.
-- **Observability**: Integrate with Prometheus, Grafana, and/or AWS CloudWatch for monitoring and alerting.
-
-## Next Steps
-
-You can customize the following:
-
-- **Terraform/IaC Scripts**: Automate provisioning and setup.
-- **Kubernetes Manifests**: Customize the application, deployment, and ingress.
-- **Architecture Diagram**: Visualize the architecture for better understanding.
+- Fully functional EKS cluster
+- Service fetching and displaying an image from an S3 bucket
+- Usage of the **mountpoint-s3-csi-driver**
+- Adherence to best practices (security, scalability, documentation, and maintainability)
+- No use of **InitContainers**
+- Public domain for external access to the service
+- Architecture diagram of the solution
 
 ## Architecture Diagram
 
-The architecture consists of:
+```mermaid
+graph TD;
 
-- EKS Cluster with managed worker nodes.
-- `mountpoint-s3-csi-driver` to mount S3 buckets as volumes.
-- A Flask app or Nginx container that fetches images from the S3 bucket and serves them.
-- AWS ALB Ingress to expose the application publicly.
-- Route 53 and ACM for domain management and SSL certificates.
-- **IRSA** for secure IAM permissions.
+  %% Networking Box
+  subgraph Networking
+    A[VPC] -->|Public| B[Public Subnet 1]
+    A -->|Public| C[Public Subnet 2]
+    A -->|Public| D[Public Subnet 3]
+    A -->|Private| E[Private Subnet 1]
+    A -->|Private| F[Private Subnet 2]
+    A -->|Private| G[Private Subnet 3]
+    B -->|Route| H[Public Route Table]
+    C -->|Route| H
+    D -->|Route| H
+    E -->|Route| I[Private Route Table]
+    F -->|Route| I
+    G -->|Route| I
+    H -->|Internet Access| J[Internet Gateway]
+    I -->|Outbound Access| K[NAT Gateway]
+  end
 
-## Tools and Technologies
+  %% Security Box
+  subgraph Security
+    A -->|Encrypts| C1[KMS Key - workload-new-work]
+    A -->|Certificate Management| G1[Cert-Manager]
+    C2[Cert-Manager ClusterIssuer] -->|Issues SSL Certificates| D2[Let's Encrypt]
+  end
 
-- AWS EKS
-- `mountpoint-s3-csi-driver`
-- AWS Load Balancer Controller (ALB Ingress)
-- Route 53 and ACM for domain and SSL management
-- Helm for deployment
-- **Terraform** for provisioning
+  %% Kubernetes Box
+  subgraph Kubernetes
+    A[EKS Cluster] -->|Node Groups| B1[Managed Worker Nodes]
+    B1 -->|Authenticates| D1[AWS IAM & RBAC]
+    A -->|Persistent Storage| E1[AWS S3 CSI Driver]
+    E1 -->|Creates| F1[S3 Bucket]
+    A2[Route 53 DNS Zone] -->|Resolves| B2[EKS Cluster]
+    B2 -->|Routes Traffic| E2[Nginx Ingress Controller]
+    E2 -->|Exposes App| F2[Hello-World Application]
+    E2 -->|Manages Routing & SSL| G2[Ingress Configuration]
+    G2 -->|Uses SSL Certificates| C2
+  end
 
----
+  %% Connecting the diagrams
+  B2 -->|Uses| A
+  F1 -->|Uses| E2
+```
+
+## Links to Related Documents
+
+- [Network README.md](./accounts/new-work/network/README.md)
+- [Security README.md](./accounts/new-work/security/README.md)
+- [Workload Creation README.md](./accounts/new-work/workload/creation/README.md)
+- [Workload Configuration README.md](./accounts/new-work/workload/configuration/README.md)
+
+[➡️ Next](./accounts/new-work/network/README.md)
