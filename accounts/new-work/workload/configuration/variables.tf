@@ -7,3 +7,7 @@ variable "cluster_name" {
 variable "namespace" {
   default = "s3-app-nw"
 }
+
+variable "issue_name" {
+  default = "letsencrypt-dev"
+}

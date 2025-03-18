@@ -106,5 +106,15 @@ module "s3_app_test" {
   source = "../../../../modules/s3-app-test"
   namespace = "s3-app-nw"
   bucket_name = "s3-bucket-${random_id.bucket_id.hex}"
+  app_s3_enabled = false
   depends_on = [module.eks_s3_csi_driver]
+}
+
+module "cert_manager" {
+  source = "../../../../modules/cert-manager"
+  aws_account_id = data.aws_caller_identity.current.account_id
+  cert_manager_version = local.cert_manager_version
+  eks_cluster_id = local.eks_cluster_id
+  eks_oidc_issuer_url = local.eks_oidc_issuer_url
+  cluster_name = var.cluster_name
 }
