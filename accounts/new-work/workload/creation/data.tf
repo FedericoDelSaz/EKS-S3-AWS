@@ -44,3 +44,11 @@ data "aws_vpc" "eks" {
 data "aws_kms_key" "new_work_kms_key" {
   key_id = "alias/workload-new-work"
 }
+
+data "aws_eks_cluster" "cluster" {
+  name = var.cluster_name
+}
+
+data "aws_eks_cluster_auth" "cluster" {
+  name = var.cluster_name
+}

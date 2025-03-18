@@ -19,16 +19,6 @@ By the end of the challenge, you should have a working service that:
 
 Please ensure your solution is properly documented, secure, and scalable. Additionally, include an **architecture diagram** to outline the details of your setup.
 
-## Requirements
-
-- Fully functional EKS cluster
-- Service fetching and displaying an image from an S3 bucket
-- Usage of the **mountpoint-s3-csi-driver**
-- Adherence to best practices (security, scalability, documentation, and maintainability)
-- No use of **InitContainers**
-- Public domain for external access to the service
-- Architecture diagram of the solution
-
 ## Architecture Diagram
 
 ```mermaid
