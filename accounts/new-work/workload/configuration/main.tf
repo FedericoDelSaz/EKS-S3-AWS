@@ -51,3 +51,9 @@ module "ingress_nginx" {
   namespace = var.namespace
   issuer_name = var.issue_name
 }
+
+module "kyverno" {
+  source                           = "../../../../modules/kyverno"
+  kyverno_enabled                  = "true"
+  kyverno_common_policies_enabled = "true"
+}

@@ -1,0 +1,10 @@
+CommonPolicies:
+  disallowDefaultNamespace:
+    enabled: true
+    validationFailureAction: Enforce
+  disallowLatestTag:
+    enabled: false
+    validationFailureAction: Audit
+  requireRunAsNonRoot:
+    enabled: true
+    validationFailureAction: Audit
