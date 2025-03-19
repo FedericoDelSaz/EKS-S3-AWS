@@ -57,9 +57,11 @@ graph TD;
   E -->|Exposes nginx-hello App| F[nginx-hello Application];
   E -->|Exposes render-image-local-app| G[Render-Image-Local-App];
   E -->|Exposes render-image-app| H[Render-Image-App];
+  H -->|Attached| F5[PVClaim]
+  F5 -->|Bound| F6[PV]
+  F6 -->|Bound| F1[S3 Bucket]
   E -->|Manages Routing & SSL| I[Ingress Configuration];
   I -->|Uses SSL Certificates| C;
-  J[Kyverno - ClusterPolicies];
 
 ```  
 
