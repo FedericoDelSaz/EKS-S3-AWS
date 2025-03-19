@@ -53,15 +53,13 @@ graph TD;
   B -->|Manages Certificates| C[Cert-Manager ClusterIssuer];
   C -->|Issues SSL Certificates| D[Let's Encrypt];
   B -->|Routes Traffic| E[Nginx Ingress Controller];
-  B -->|CLusterPolicies| P[Kyverno];
+  B -->|CLusterPolicies| J[Kyverno];
   E -->|Exposes nginx-hello App| F[nginx-hello Application];
   E -->|Exposes render-image-local-app| G[Render-Image-Local-App];
   E -->|Exposes render-image-app| H[Render-Image-App];
-  H -->|Attached| I[PVClaim]
-  J -->|Bound| K[PV]
-  K -->|Bound| L[S3 Bucket]
-  M -->|Manages Routing & SSL| N[Ingress Configuration];
-  O -->|Uses SSL Certificates| C;
+  E -->|Manages Routing & SSL| I[Ingress Configuration];
+  I -->|Uses SSL Certificates| C;
+  J[Kyverno - ClusterPolicies];
 
 ```  
 
