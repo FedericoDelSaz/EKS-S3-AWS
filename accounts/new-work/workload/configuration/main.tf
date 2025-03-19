@@ -32,7 +32,21 @@ module "hello_app" {
   namespace = var.namespace
 }
 
-module "ingress-" {
+module "render_image_app_local" {
+  source = "../../../../modules/s3-app-test/render-image-app-local"
+  bucket_name = "s3-bucket-render-image"
+  namespace   = var.namespace
+  environment = "dev"
+}
+
+module "render_image_app" {
+  source = "../../../../modules/s3-app-test/render-image-app"
+  bucket_name = "s3-bucket-render-image"
+  namespace   = var.namespace
+  environment = "dev"
+}
+
+module "ingress_nginx" {
   source = "../../../../modules/s3-app-test/ingress-manifest"
   namespace = var.namespace
   issuer_name = var.issue_name

@@ -104,11 +104,18 @@ module "eks_s3_csi_driver" {
 
 module "s3_app_test" {
   source = "../../../../modules/s3-app-test"
-  namespace = "s3-app-nw"
+  namespace = var.namespace
   bucket_name = "s3-bucket-${random_id.bucket_id.hex}"
   app_s3_enabled = false
   depends_on = [module.eks_s3_csi_driver]
 }
+
+#module "render_image_app" {
+#  source = "../../../../modules/s3-app-test/render-image-app"
+#  bucket_name = "s3-bucket-${random_id.bucket_id.hex}"
+#  namespace   = var.namespace
+#  depends_on = [module.s3_app_test]
+#}
 
 module "cert_manager" {
   source = "../../../../modules/cert-manager"
