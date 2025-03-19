@@ -8,6 +8,4 @@
 **/.terraform.lock.hcl
 **/applyConfigurationPlan
 backup/
-xentry-charts/**/*.lock
-xentry-charts/**/*.tgz
 **/__pycache__/*.pyc
