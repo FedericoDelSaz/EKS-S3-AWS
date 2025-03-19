@@ -1,0 +1,33 @@
+config:
+  resourceFilters:
+  - "[Event,*,*]"
+  - "[*/*,kube-system,*]"
+  - "[*/*,kube-public,*]"
+  - "[Node,*,*]"
+  - "[Node/*,*,*]"
+  - "[APIService,*,*]"
+  - "[APIService/*,*,*]"
+  - "[TokenReview,*,*]"
+  - "[SubjectAccessReview,*,*]"
+  - "[SelfSubjectAccessReview,*,*]"
+  - "[Binding,*,*]"
+  - "[Pod/binding,*,*]"
+  - "[ReplicaSet,*,*]"
+  - "[ReplicaSet/*,*,*]"
+  - '[AdmissionReport,*,*]'
+  - '[AdmissionReport/*,*,*]'
+  - '[ClusterAdmissionReport,*,*]'
+  - '[ClusterAdmissionReport/*,*,*]'
+  - '[BackgroundScanReport,*,*]'
+  - '[BackgroundScanReport/*,*,*]'
+  - '[ClusterBackgroundScanReport,*,*]'
+  - '[ClusterBackgroundScanReport/*,*,*]'
+  - "[*/*,cert-manager,*]"
+  webhooks:
+  - namespaceSelector:
+      matchExpressions:
+      - key: kubernetes.io/metadata.name
+        operator: NotIn
+        values:
+        - kube-system
+
