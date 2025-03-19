@@ -4,11 +4,15 @@ This module configures essential services and networking for the **EKS cluster**
 
 ## Overview
 
+
 The configuration includes:
 - **DNS Management** with AWS Route 53
 - **SSL Certificates** using Cert-Manager and Let's Encrypt
 - **Ingress Controller** with Nginx
-- **Hello-World Application** for testing
+- **Nginx-hello Application** that serves "Hello, World!" from a ConfigMap
+- **Render-Image-Local-App** that exposes `image.jpg` from a local directory
+- **Render-Image-App** that exposes `image.jpg` from an S3 bucket
+- **Policy Enforcement** using Kyverno
 
 ## Resources Configured
 
@@ -24,11 +28,22 @@ The configuration includes:
 - Deploys an **Ingress Controller** to manage external traffic.
 - Routes requests to internal services securely.
 
-### **Hello-World Application**
-- Deploys a basic **test application** to validate the cluster’s functionality.
+### **Nginx-Hello Application**
+- Deploys an **Nginx-based application** that serves a "Hello, World!" message from a ConfigMap.
+
+### **Render-Image-Local-App**
+- Deploys an application that serves an image (`image.jpg`) stored locally within the container.
+
+### **Render-Image-App**
+- Deploys an application that serves an image (`image.jpg`) stored in an S3 bucket.
 
 ### **Ingress Configuration**
 - Defines an **Ingress resource** to expose applications via the configured domain.
+
+### **Kyverno**
+- Enforces security and configuration policies on Kubernetes resources.
+- Ensures compliance with best practices for workloads and network policies.
+- Automatically audits and remediates misconfigurations.
 
 ## Architecture
 
@@ -38,24 +53,26 @@ graph TD;
   B -->|Manages Certificates| C[Cert-Manager ClusterIssuer];
   C -->|Issues SSL Certificates| D[Let's Encrypt];
   B -->|Routes Traffic| E[Nginx Ingress Controller];
-  E -->|Exposes App| F[Render-Image Application];
-  E -->|Manages Routing & SSL| G[Ingress Configuration];
-  G -->|Uses SSL Certificates| C;
+  B -->|CLusterPolicies| J[Kyverno];
+  E -->|Exposes nginx-hello App| F[nginx-hello Application];
+  E -->|Exposes render-image-local-app| G[Render-Image-Local-App];
+  E -->|Exposes render-image-app| H[Render-Image-App];
+  E -->|Manages Routing & SSL| I[Ingress Configuration];
+  I -->|Uses SSL Certificates| C;
+  J[Kyverno - ClusterPolicies];
+
 ```  
 
 ## Prerequisites
 - **EKS Cluster** must be deployed.
 - **Cert-Manager** must be installed.
 - **Terraform & Kubectl** must be configured.
-
-## Outputs
-- **DNS Zone ID** for Route 53
-- **Ingress Controller Deployment** status
-- **Hello-World App URL**
+- **Kyverno** must be installed for policy enforcement.
 
 ## Security Considerations
 - Uses **Let's Encrypt** for free SSL/TLS certificates.
 - **Ingress rules** ensure controlled access.
 - **DNS resolution** prevents misconfigured domains.
+- **Kyverno policies** help enforce best practices for security, configurations, and compliance across Kubernetes resources.
 
 [🔙 Return](../creation/README.md) | [➡️ Index](../../../../README.md)

@@ -42,36 +42,61 @@ graph TD;
     I -->|Outbound Access| K[NAT Gateway]
   end
 
-  %% Security Box
-  subgraph Security
-    A -->|Encrypts| C1[KMS Key - workload-new-work]
-    A -->|Certificate Management| G1[Cert-Manager]
-    C2[Cert-Manager ClusterIssuer] -->|Issues SSL Certificates| D2[Let's Encrypt]
-  end
-
   %% Kubernetes Box
   subgraph Kubernetes
-    A[EKS Cluster] -->|Node Groups| B1[Managed Worker Nodes]
-    B1 -->|Authenticates| D1[AWS IAM & RBAC]
-    A -->|Persistent Storage| E1[AWS S3 CSI Driver]
-    E1 -->|Creates| F1[S3 Bucket]
     A2[Route 53 DNS Zone] -->|Resolves| B2[EKS Cluster]
+    B2 -->|Storage| E1[AWS S3 CSI Driver]
     B2 -->|Routes Traffic| E2[Nginx Ingress Controller]
-    E2 -->|Exposes App| F2[Hello-World Application]
-    E2 -->|Manages Routing & SSL| G2[Ingress Configuration]
+    B2 -->|ClusterPolicies| E3[Kyverno]
+    C2[Cert-Manager ClusterIssuer] -->|Issues SSL Certificates| D2[Let's Encrypt]
+    G2[Ingress Configuration] -->|Certificate| D2
+    E2 -->|Exposes App| F2[nginx-hello Application]
+    E2 -->|Exposes App| F3[Render-Image-Local-App]
+    E2 -->|Exposes App| F4[Render-Image-App]
+    F4 -->|Attached| F5[PVClaim]
+    F5 -->|Bound| F6[PV]
+    F6 -->|Bound| F1[S3 Bucket]
+    F6 -->|Uses| E1
+    E2 -->|Manages Routing & SSL| G2
     G2 -->|Uses SSL Certificates| C2
   end
 
   %% Connecting the diagrams
-  B2 -->|Uses| A
-  F1 -->|Uses| E2
+
+
 ```
 
 ## Links to Related Documents
 
-- [Network README.md](./accounts/new-work/network/README.md)
-- [Security README.md](./accounts/new-work/security/README.md)
-- [Workload Creation README.md](./accounts/new-work/workload/creation/README.md)
-- [Workload Configuration README.md](./accounts/new-work/workload/configuration/README.md)
+- [Network](./accounts/new-work/network/README.md)
+- [Security](./accounts/new-work/security/README.md)
+- [Workload Creation](./accounts/new-work/workload/creation/README.md)
+- [Workload Configuration](./accounts/new-work/workload/configuration/README.md)
+
+## How to acess to Applications Exposed:
+
+Here’s the updated table with the **Save Hosts File** step removed:
+Here’s the updated table with the **`nslookup`** command added for **Windows** and **Mac**:
+
+| **Step**                       | **Windows**                                           | **Mac**                                                 | **Ubuntu**                                               |
+|---------------------------------|-------------------------------------------------------|---------------------------------------------------------|---------------------------------------------------------|
+| **Open and Edit Hosts File**    | Open **Notepad as Administrator**, then open file: `C:\Windows\System32\drivers\etc\hosts` | Open **Terminal**, then run: `sudo nano /etc/hosts`     | Run: `sudo nano /etc/hosts`                              |
+| **Add Entry**                   | Add: `54.217.92.88   new-work-se-test.com`            | Add: `54.217.92.88   new-work-se-test.com`              | Add: `54.217.92.88   new-work-se-test.com`              |
+| **Check DNS Resolution**        | Run: `nslookup new-work-se-test.com`                  | Run: `nslookup new-work-se-test.com`                    | Run: `nslookup new-work-se-test.com`                     |
+
+### 1. **nginx-hello Application**
+- **URL:** [https://new-work-se-test.com/hello](https://new-work-se-test.com/hello)
+- **Access Instructions:**  
+  Simply open the URL in a web browser to view the "nginx-hello" application. This might be a basic Nginx application serving a simple "Hello" page.
+
+### 2. **Render-Image-Local-App**
+- **URL:** [https://new-work-se-test.com/render-image-local/image.jpg](https://new-work-se-test.com/render-image-local/image.jpg)
+- **Access Instructions:**  
+  Open this URL in a web browser to view the image served by the "Render-Image-Local-App". The application seems to expose a local image at the specified path.
+
+### 3. **Render-Image-App**
+- **URL:** [https://new-work-se-test.com/render-image/image.jpg](https://new-work-se-test.com/render-image/image.jpg)
+- **Access Instructions:**  
+  Open this URL in a web browser to view the image served by the "Render-Image-App". Similar to the previous app, it seems to serve an image, but possibly with additional logic or processing involved in rendering.
 
 [➡️ Next](./accounts/new-work/network/README.md)
