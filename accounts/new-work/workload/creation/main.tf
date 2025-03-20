@@ -124,4 +124,8 @@ module "cert_manager" {
   eks_cluster_id = local.eks_cluster_id
   eks_oidc_issuer_url = local.eks_oidc_issuer_url
   cluster_name = var.cluster_name
+  providers = {
+    aws = aws
+    helm = helm.cert-manager
+  }
 }
