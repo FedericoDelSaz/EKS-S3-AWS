@@ -6,6 +6,7 @@ locals {
   cidr_block          = "10.0.0.0/16"
   eks_cluster_id      = data.aws_eks_cluster.eks.id
   eks_oidc_issuer_url = replace(data.aws_eks_cluster.eks.identity[0].oidc[0].issuer, "https://", "")
+  eks_oidc_provider_arn   = "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${local.eks_oidc_issuer_url}"
 
   # Make sure that private subnets are defined and available
   private_eks_subnets = length(data.aws_subnets.eks_private_subnets.ids) > 0 ? data.aws_subnets.eks_private_subnets.ids : []

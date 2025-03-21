@@ -1,5 +1,14 @@
-resource "aws_route53_zone" "new_work_domain" {
-  name = local.public_domain
+module "new_worl_alb" {
+  source = "../../../../modules/aws-alb"
+  vpc_id = local.vpc_id
+  public_subnets = local.public_eks_subnets
+  vpc_name = "eks-vpc"
+}
+
+module "new_work_route53" {
+  source = "../../../../modules/aws-route53"
+  dns_name = local.public_domain
+  zone_id = module.new_worl_alb.zone_id
 }
 
 resource "kubectl_manifest" "new_work_issuer" {
@@ -50,6 +59,7 @@ module "ingress_nginx" {
   source      = "../../../../modules/s3-app-test/ingress-manifest"
   namespace   = var.namespace
   issuer_name = var.issue_name
+  alb_name    = module.new_worl_alb.alb_name
 }
 
 module "kyverno" {

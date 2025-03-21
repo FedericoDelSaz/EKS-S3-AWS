@@ -9,8 +9,12 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/use-regex: "true"
     cert-manager.io/cluster-issuer: ${var.issuer_name}
+    alb.ingress.kubernetes.io/load-balancer-name: ${var.alb_name}
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: instance
+    alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=60
 spec:
-  ingressClassName: nginx
+  ingressClassName: alb
   tls:
     - hosts:
         - new-work-se-test.com

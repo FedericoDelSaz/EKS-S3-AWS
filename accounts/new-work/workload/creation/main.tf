@@ -121,3 +121,21 @@ module "cert_manager" {
   eks_oidc_issuer_url  = local.eks_oidc_issuer_url
   cluster_name         = var.cluster_name
 }
+
+module "load_balancer_controller" {
+  source = "../../../../modules/aws-load-balancer-controller"
+
+  cluster_name          = var.cluster_name
+  eks_cluster_id        = local.eks_cluster_id
+  eks_oidc_issuer_url   = local.eks_oidc_issuer_url
+  eks_oidc_provider_arn = local.eks_oidc_provider_arn
+  helm_chart_version    = "1.5.5"
+}
+
+module "external_dns" {
+  source = "../../../../modules/external-dns"
+
+  eks_cluster_id      = local.eks_cluster_id
+  eks_oidc_issuer_url = local.eks_oidc_issuer_url
+  aws_account_id      = data.aws_caller_identity.current.account_id
+}

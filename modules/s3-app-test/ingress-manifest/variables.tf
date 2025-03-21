@@ -7,3 +7,5 @@ variable "issuer_name" {
   type        = string
   description = "The name of the issuer for certificate management"
 }
+
+variable "alb_name" {}
