@@ -11,3 +11,7 @@ variable "namespace" {
 variable "issue_name" {
   default = "letsencrypt-dev"
 }
+
+variable "domain_name" {
+  default = "new-work-se-test.com"
+}
