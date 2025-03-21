@@ -23,37 +23,37 @@ YAML
 }
 
 module "nginx_controller" {
-  source = "../../../../modules/nginx-ingress-controller"
+  source       = "../../../../modules/nginx-ingress-controller"
   cluster_name = var.cluster_name
 }
 
 module "hello_app" {
-  source = "../../../../modules/s3-app-test/hello-world-app"
+  source    = "../../../../modules/s3-app-test/hello-world-app"
   namespace = var.namespace
 }
 
 module "render_image_app_local" {
-  source = "../../../../modules/s3-app-test/render-image-app-local"
+  source      = "../../../../modules/s3-app-test/render-image-app-local"
   bucket_name = "s3-bucket-render-image"
   namespace   = var.namespace
   environment = "dev"
 }
 
 module "render_image_app" {
-  source = "../../../../modules/s3-app-test/render-image-app"
+  source      = "../../../../modules/s3-app-test/render-image-app"
   bucket_name = "s3-bucket-render-image"
   namespace   = var.namespace
   environment = "dev"
 }
 
 module "ingress_nginx" {
-  source = "../../../../modules/s3-app-test/ingress-manifest"
-  namespace = var.namespace
+  source      = "../../../../modules/s3-app-test/ingress-manifest"
+  namespace   = var.namespace
   issuer_name = var.issue_name
 }
 
 module "kyverno" {
-  source                           = "../../../../modules/kyverno"
-  kyverno_enabled                  = "true"
+  source                          = "../../../../modules/kyverno"
+  kyverno_enabled                 = "true"
   kyverno_common_policies_enabled = "true"
 }

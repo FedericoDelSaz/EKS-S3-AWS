@@ -1,13 +1,13 @@
 module "eks" {
-  source          = "terraform-aws-modules/eks/aws"
-  version         = "20.24.0"
-  cluster_name    = var.cluster_name
-  cluster_version = local.cluster_version
-  subnet_ids      = local.private_eks_subnets
-  vpc_id          = data.aws_vpc.eks.id
-  create_kms_key  = false
-  enable_irsa                = true
-  create_node_security_group = false
+  source                          = "terraform-aws-modules/eks/aws"
+  version                         = "20.24.0"
+  cluster_name                    = var.cluster_name
+  cluster_version                 = local.cluster_version
+  subnet_ids                      = local.private_eks_subnets
+  vpc_id                          = data.aws_vpc.eks.id
+  create_kms_key                  = false
+  enable_irsa                     = true
+  create_node_security_group      = false
   cluster_endpoint_private_access = true
   cluster_endpoint_public_access  = true
 
@@ -17,15 +17,18 @@ module "eks" {
   }
 
   cluster_addons = {
+    #The CoreDNS Pods provide name resolution for all Pods in the cluster
     coredns = {
       most_recent = true
       configuration_values = jsonencode({
         replicaCount = 3
       })
     }
+    #Maintains network rules on your nodes and enables network communication to your Pods
     kube-proxy = {
       most_recent = true
     }
+    #Assign IPs to Pods
     vpc-cni = {
       most_recent = true
     }
@@ -95,26 +98,26 @@ resource "random_id" "bucket_id" {
 }
 
 module "eks_s3_csi_driver" {
-  source  = "../../../../modules/aws-s3-csi-driver"
+  source = "../../../../modules/aws-s3-csi-driver"
 
-  environment = "dev"
+  environment      = "dev"
   eks_cluster_name = var.cluster_name
-  bucket_name = "s3-bucket-${random_id.bucket_id.hex}"
+  bucket_name      = "s3-bucket-${random_id.bucket_id.hex}"
 }
 
 module "s3_app_test" {
-  source = "../../../../modules/s3-app-test"
-  namespace = var.namespace
-  bucket_name = "s3-bucket-${random_id.bucket_id.hex}"
+  source         = "../../../../modules/s3-app-test"
+  namespace      = var.namespace
+  bucket_name    = "s3-bucket-${random_id.bucket_id.hex}"
   app_s3_enabled = false
-  depends_on = [module.eks_s3_csi_driver]
+  depends_on     = [module.eks_s3_csi_driver]
 }
 
 module "cert_manager" {
-  source = "../../../../modules/cert-manager"
-  aws_account_id = data.aws_caller_identity.current.account_id
+  source               = "../../../../modules/cert-manager"
+  aws_account_id       = data.aws_caller_identity.current.account_id
   cert_manager_version = local.cert_manager_version
-  eks_cluster_id = local.eks_cluster_id
-  eks_oidc_issuer_url = local.eks_oidc_issuer_url
-  cluster_name = var.cluster_name
+  eks_cluster_id       = local.eks_cluster_id
+  eks_oidc_issuer_url  = local.eks_oidc_issuer_url
+  cluster_name         = var.cluster_name
 }

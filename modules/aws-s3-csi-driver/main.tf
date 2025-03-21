@@ -9,9 +9,9 @@ resource "aws_s3_bucket" "s3_bucket_driver" {
 
 # S3 Bucket policy to allow access from the EKS service account used by the CSI driver
 resource "aws_s3_object" "bucket_policy" {
-  bucket = aws_s3_bucket.s3_bucket_driver.bucket
-  key    = "bucket-policy.json"
-  acl    = "private"
+  bucket  = aws_s3_bucket.s3_bucket_driver.bucket
+  key     = "bucket-policy.json"
+  acl     = "private"
   content = <<EOF
   {
     "Version": "2012-10-17",
@@ -68,7 +68,7 @@ resource "aws_iam_policy" "s3_policy" {
 }
 
 resource "aws_iam_role" "s3_csi_driver" {
-  name               = "${var.eks_cluster_name}-s3-csi-role"
+  name = "${var.eks_cluster_name}-s3-csi-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [

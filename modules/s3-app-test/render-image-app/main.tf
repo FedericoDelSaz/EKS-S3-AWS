@@ -9,9 +9,9 @@ resource "aws_s3_bucket" "s3_bucket_driver" {
 
 # S3 Bucket policy to allow access from the EKS service account used by the CSI driver
 resource "aws_s3_object" "bucket_policy" {
-  bucket = aws_s3_bucket.s3_bucket_driver.bucket
-  key    = "bucket-policy.json"
-  acl    = "private"
+  bucket  = aws_s3_bucket.s3_bucket_driver.bucket
+  key     = "bucket-policy.json"
+  acl     = "private"
   content = <<EOF
   {
     "Version": "2012-10-17",
@@ -46,7 +46,7 @@ resource "aws_s3_object" "bucket_policy" {
 #}
 
 resource "kubectl_manifest" "retain_storage_class" {
-  yaml_body  = <<YAML
+  yaml_body = <<YAML
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:

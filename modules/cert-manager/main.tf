@@ -49,7 +49,7 @@ resource "helm_release" "cert_manager" {
 }
 
 resource "aws_iam_policy" "cert_manager_access_to_route53" {
-  name     = "${var.eks_cluster_id}-cert-manager"
+  name = "${var.eks_cluster_id}-cert-manager"
 
   policy = <<EOF
 {
